@@ -32,7 +32,6 @@ import {
   BookOpen,
   AlertTriangle,
   Sliders,
-  Trophy,
 } from 'lucide-react';
 
 import {
@@ -93,9 +92,6 @@ import { FinancialCrisisModal } from './components/FinancialCrisisModal';
 import { LifeAlmanacModal } from './components/LifeAlmanacModal';
 import { AmbienceSoundBar } from './components/AmbienceSoundBar';
 import { RandomEventModal } from './components/RandomEventModal';
-import { EndingsShowcaseModal } from './components/EndingsShowcaseModal';
-import { EndingId, GAME_ENDINGS_CATALOG } from './game/config/endingData';
-import { checkNaturalEndingTrigger } from './game/engine/endingEngine';
 
 export default function App() {
   // 核心持久化游戏状态
@@ -126,8 +122,6 @@ export default function App() {
   const [showCrisisModal, setShowCrisisModal] = useState<boolean>(false);
   const [showAutoRestockModal, setShowAutoRestockModal] = useState<boolean>(false);
   const [showRandomEventModal, setShowRandomEventModal] = useState<boolean>(false);
-  const [showEndingsModal, setShowEndingsModal] = useState<boolean>(false);
-  const [initialEndingForModal, setInitialEndingForModal] = useState<EndingId | null>(null);
   const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
@@ -329,23 +323,6 @@ export default function App() {
 
     setCurrentSettlementReport(report);
     updateGameState(nextState);
-
-    // 检查是否自然达成终局结局里程碑
-    const naturalEnding = checkNaturalEndingTrigger(nextState);
-    if (naturalEnding) {
-      const naturalCfg = GAME_ENDINGS_CATALOG[naturalEnding];
-      showToast(`🎉 书咖达成【${naturalCfg.title}】终章条件！点击顶部【终章结局】可举行通关典礼。`, 'success');
-    }
-  };
-
-  // 一键载入终局世界存档进行体验
-  const handleLoadEndingSave = (newSave: GameSaveData, endingTitle: string) => {
-    updateGameState(newSave);
-    setCurrentSettlementReport(null);
-    setDayOpeningCash(newSave.cash);
-    setDayProcurementPaid(0);
-    setDayCapexPaid(0);
-    showToast(`已成功载入【${endingTitle}】终局世界存档！尽情体验吧！`, 'success');
   };
 
   // 解决突发随机事件应对方案
@@ -562,19 +539,6 @@ export default function App() {
         onClose={() => setShowAlmanacModal(false)}
       />
 
-      {/* 终章结局演示中心与纪念馆 */}
-      <EndingsShowcaseModal
-        isOpen={showEndingsModal}
-        gameState={gameState}
-        initialEndingId={initialEndingForModal}
-        onClose={() => {
-          setShowEndingsModal(false);
-          setInitialEndingForModal(null);
-        }}
-        onLoadEndingSave={handleLoadEndingSave}
-        showToast={showToast}
-      />
-
       {/* 突发随机经营事件应对决策弹窗 */}
       {showRandomEventModal && gameState.pendingRandomEvent && !gameState.pendingRandomEvent.isResolved && (
         <RandomEventModal
@@ -640,21 +604,6 @@ export default function App() {
 
           {/* 控制按钮集群 */}
           <div className="flex items-center gap-1.5">
-            {/* 终章结局演示中心 */}
-            <button
-              onClick={() => {
-                playClickSound();
-                setInitialEndingForModal(null);
-                setShowEndingsModal(true);
-              }}
-              className="doodle-btn px-2.5 py-1 text-xs flex items-center gap-1.5 font-bold bg-amber-100 text-amber-950 border-amber-900 shadow-[1.5px_1.5px_0px_#1c1917] hover:bg-amber-200 transition-colors"
-              title="查看与演示玩到最后的6大终章结局"
-            >
-              <Trophy className="w-3.5 h-3.5 text-amber-800" />
-              <span>终章结局</span>
-              <span className="text-[9px] px-1 bg-amber-300 rounded text-amber-900 font-mono hidden sm:inline">演示</span>
-            </button>
-
             {/* 生活图鉴总馆 */}
             <button
               onClick={() => {
@@ -869,10 +818,6 @@ export default function App() {
             <SettlementModal
               report={currentSettlementReport}
               onNextDay={handleProceedToNextDay}
-              onOpenEndings={() => {
-                setInitialEndingForModal(null);
-                setShowEndingsModal(true);
-              }}
             />
           ) : (
             <div className="doodle-box p-6 bg-white text-center space-y-3">

@@ -29,13 +29,11 @@ import { playClickSound, playPageFlipSound, playCoinSound } from '../game/audio/
 interface SettlementModalProps {
   report: DailyReport;
   onNextDay: () => void;
-  onOpenEndings?: () => void;
 }
 
 export const SettlementModal: React.FC<SettlementModalProps> = ({
   report,
   onNextDay,
-  onOpenEndings,
 }) => {
   const isProfitable = report.netProfit >= 0;
 
@@ -318,26 +316,13 @@ export const SettlementModal: React.FC<SettlementModalProps> = ({
         </div>
 
         {/* 底部进入下一天按钮 */}
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2.5">
-          {onOpenEndings && (
-            <button
-              onClick={() => {
-                playClickSound();
-                onOpenEndings();
-              }}
-              className="w-full sm:w-auto doodle-btn px-4 py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 bg-amber-100 hover:bg-amber-200 text-amber-950 border-amber-900 shadow-[2px_2px_0px_#1c1917]"
-              title="查看经营终局倾向与全部结局演示"
-            >
-              <span>🏆 查看/演示经营终局</span>
-            </button>
-          )}
-
+        <div className="pt-2 flex justify-end">
           <button
             onClick={() => {
               playPageFlipSound();
               onNextDay();
             }}
-            className="w-full sm:w-auto doodle-btn doodle-btn-primary px-6 py-2.5 text-sm flex items-center justify-center gap-2 shadow-[3px_3px_0px_#1c1917] ml-auto"
+            className="w-full sm:w-auto doodle-btn doodle-btn-primary px-6 py-2.5 text-sm flex items-center justify-center gap-2 shadow-[3px_3px_0px_#1c1917]"
           >
             <span>进入第 {report.day + 1} 经营日 (开启晨间简报)</span>
             <ArrowRight className="w-4 h-4" />

@@ -273,34 +273,6 @@ export function playMeowSound() {
 }
 
 /**
- * 终章通关/结局演示庆典琶音 (高雅温馨和弦)
- */
-export function playEndingCelebrationSound() {
-  if (isMuted) return;
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  const now = ctx.currentTime;
-  // C大九和弦华丽琶音: C5, E5, G5, B5, D6
-  const notes = [523.25, 659.25, 783.99, 987.77, 1174.66];
-  notes.forEach((freq, index) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, now + index * 0.12);
-
-    gain.gain.setValueAtTime(0.001, now + index * 0.12);
-    gain.gain.linearRampToValueAtTime(0.12, now + index * 0.12 + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.12 + 0.8);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now + index * 0.12);
-    osc.stop(now + index * 0.12 + 0.85);
-  });
-}
-
-/**
  * 随机鸟鸣生成器 (单次清脆鸟叫)
  */
 function triggerProceduralBirdChirp(ctx: AudioContext, masterGain: GainNode) {

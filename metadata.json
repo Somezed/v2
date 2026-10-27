@@ -2,5 +2,7 @@
   "name": "Remix Remix 豆哥的猫咪书咖",
   "description": "治愈系黑白简笔画风格的模拟经营游戏，与豆哥和蓝猫兰兰一起经营温暖的猫咪书咖。",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
